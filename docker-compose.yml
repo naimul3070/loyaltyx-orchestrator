@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  orchestrator:
+    build: .
+    container_name: loyaltyx_orchestrator
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      # Add more env vars if needed, e.g. INFURA_URL, DB credentials
+    restart: unless-stopped
