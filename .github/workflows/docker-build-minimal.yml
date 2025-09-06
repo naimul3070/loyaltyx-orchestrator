@@ -1,0 +1,37 @@
+name: Build and Push Docker (Minimal)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      # 1️⃣ Checkout code
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      # 2️⃣ Verify Docker is installed
+      - name: Docker version
+        run: docker version
+
+      # 3️⃣ Docker login directly (bypass secrets)
+      - name: Docker login
+        run: |
+          echo "dckr_pat_JcrJ4eqgkp3_V6PuTiSDvI1RYpg" | docker login -u naimulhub --password-stdin
+
+      # 4️⃣ Build the Docker image
+      - name: Build Docker image
+        run: docker build -t naimulhub/loyaltyx-orchestrator:${GITHUB_SHA::7} .
+
+      # 5️⃣ Push the image
+      - name: Push Docker image
+        run: docker push naimulhub/loyaltyx-orchestrator:${GITHUB_SHA::7}
+
+      # 6️⃣ Tag as latest and push
+      - name: Tag latest
+        run: |
+          docker tag naimulhub/loyaltyx-orchestrator:${GITHUB_SHA::7} naimulhub/loyaltyx-orchestrator:latest
+          docker push naimulhub/loyaltyx-orchestrator:latest
